@@ -6,7 +6,7 @@ create table if not exists calls (
   prospect_label text not null default 'Unnamed prospect',
   started_at timestamptz not null default now(),
   ended_at timestamptz,
-  outcome text check (outcome in ('meeting_booked','callback','interested','not_interested','no_decision','hung_up','wrong_person')),
+  outcome text check (outcome in ('agreed_to_receive_report','next_step_agreed','interested','follow_up','call_again','not_interested','do_not_call','wrong_person','moved_company')),
   last_stage int not null default 1,
   summary text
 );

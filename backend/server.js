@@ -9,8 +9,8 @@ app.use(cors({ origin: process.env.FRONTEND_ORIGIN?.split(",") || "*" }));
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-const OUTCOMES = ["meeting_booked","callback","interested","not_interested","no_decision","hung_up","wrong_person"];
-const STAGE_NAMES = ["Opener","Permission","Reason for call","Discovery","Objections","Pitch","The ask","Close"];
+const OUTCOMES = ["agreed_to_receive_report","next_step_agreed","interested","follow_up","call_again","not_interested","do_not_call","wrong_person","moved_company"];
+const STAGE_NAMES = ["Reach the right person","Introduce and ask for time","Give the reason for the call","Explain who you are and the offer","Ask about their growth","Handle the push-back","Ask to send the report","Fix the next step and close"];
 
 const fail = (res, error, code = 500) => res.status(code).json({ error: error?.message || String(error) });
 
@@ -65,7 +65,9 @@ app.post("/calls/:id/close", async (req, res) => {
 
   const { data: stages } = await db.from("stage_results").select("*").eq("call_id", req.params.id).order("stage_no");
   let summary = null;
+  const hasContent = (stages || []).some(s => s.happened || (s.prospect_words || "").trim());
   try {
+    if (!hasContent) throw new Error("nothing to summarise");
     const log = (stages || []).map(s => `Stage ${s.stage_no} (${STAGE_NAMES[s.stage_no - 1]}): ${s.happened || "-"}; prospect said: "${s.prospect_words || ""}"`).join("\n");
     summary = await gemini(`Write ONE plain sentence (max 25 words) summarising this cold call for a sales log. Outcome: ${outcome}.\n${log}`);
   } catch { /* summary is optional; never block closing a call */ }

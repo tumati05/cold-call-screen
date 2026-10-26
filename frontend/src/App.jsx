@@ -58,10 +58,16 @@ function LiveCall({ onDone }) {
     setBusy(false);
   }
 
+  async function endEarly() {
+    setBusy(true); setErr("");
+    try { await persist(); setEnding(true); }
+    catch (e) { setErr(e.message); }
+    setBusy(false);
+  }
+
   async function finish(outcome) {
     setBusy(true); setErr("");
     try {
-      if (!ending) await persist();
       await api.closeCall(call.id, outcome);
       onDone();
     } catch (e) { setErr(e.message); setBusy(false); }
@@ -93,8 +99,13 @@ function LiveCall({ onDone }) {
     return (
       <main className="card">
         <h2>How did the call end?</h2>
+        <p className="muted">Pick the one that matches how the prospect actually left it.</p>
         <div className="grid">
-          {OUTCOMES.map(([v, l]) => <button key={v} disabled={busy} onClick={() => finish(v)}>{l}</button>)}
+          {OUTCOMES.map(([v, l, hint]) => (
+            <button key={v} className="outcome" disabled={busy} onClick={() => finish(v)}>
+              <strong>{l}</strong><small>{hint}</small>
+            </button>
+          ))}
         </div>
         {err && <p className="err">{err}</p>}
       </main>
@@ -106,7 +117,7 @@ function LiveCall({ onDone }) {
       <ol className="steps">
         {STAGES.map((s, i) => (
           <li key={s.no} className={i === idx ? "now" : i < idx ? "done" : ""} onClick={() => i <= idx && setIdx(i)}>
-            <span>{s.no}</span><em>{s.name}</em>
+            <span>{s.no}</span><em>{s.short}</em>
           </li>
         ))}
       </ol>
@@ -115,6 +126,7 @@ function LiveCall({ onDone }) {
         <p className="tag">Stage {stage.no} of 8</p>
         <h2>{stage.name}</h2>
         <p className="purpose">{stage.purpose}</p>
+        <p className="evidence"><b>In the 100 calls:</b> {stage.evidence}</p>
 
         <h3>Prospects often say</h3>
         <ul className="says">{stage.prospectSays.map(s => <li key={s}>"{s}"</li>)}</ul>
@@ -140,7 +152,7 @@ function LiveCall({ onDone }) {
           <button className="primary" disabled={busy} onClick={next}>
             {idx === STAGES.length - 1 ? "Finish call" : `Next: ${STAGES[idx + 1].name}`}
           </button>
-          <button className="danger" disabled={busy} onClick={() => setEnding(true)}>End call early</button>
+          <button className="danger" disabled={busy} onClick={endEarly}>End call early</button>
         </div>
       </section>
     </main>

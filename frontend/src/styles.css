@@ -32,3 +32,6 @@ input, textarea { width: 100%; font: inherit; padding: 10px; border: 1px solid #
 .steps li.done { background: #ddd4f2; color: #4a3d78; } .steps li.now { background: #5c4d82; color: #fff; }
 .call { cursor: pointer; } .pill { background: #efe8f8; border-radius: 99px; padding: 2px 10px; font-size: 12px; color: #4a3d78; }
 .detail { margin: 8px 0 0; padding-left: 18px; font-size: 14px; }
+.evidence { font-size: 13px; background: #efe8f8; border-radius: 8px; padding: 8px 10px; margin: 10px 0 0; }
+button.outcome { text-align: left; display: flex; flex-direction: column; gap: 2px; }
+button.outcome small { font-size: 12px; opacity: .7; }

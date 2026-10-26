@@ -3,9 +3,9 @@
 A screen a caller keeps open beside the phone on a cold call. It shows the current stage of the call, what that stage is for, what prospects tend to say, a tap for what happened, and a box for the prospect's words. Calls are saved; a second screen lists past calls and the stage each reached.
 
 ## Live links
-- Vercel app: https://YOUR-APP.vercel.app
-- Render API health: https://YOUR-API.onrender.com/health (the free tier sleeps when idle, so the first request can take up to a minute)
-- LLM: Google Gemini (gemini-2.0-flash), called only from the Render backend
+- Vercel app: https://cold-call-screen-five.vercel.app
+- Render API health: https://cold-call-screen-1its.onrender.com/health (the free tier sleeps when idle, so the first request can take up to a minute)
+- LLM: Google Gemini (gemini-3.8-flash), called only from the Render backend
 
 ## What the LLM does
 1. **Suggest what happened**: from the prospect's words typed at a stage, picks the best matching tap option (`POST /suggest`).
